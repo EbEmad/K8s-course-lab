@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-mysql-job
+spec:
+  templete:
+    spec:
+      containers:
+      - name: mysql-init-container
+        image: mysql:latest
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: root-password
+        - name: MYSQL_AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-secret
+              key: auth-password
+        - name: MYSQL_HOST
+          value: 'mysql'
+        - name: MYSQL_PORT
+          value: '3306'
+        command: ['/bin/sh','-c']
+        args: 
+        - |
+          mysql -h${MYSQL_HOST} -P${MYSQL_PORT} -uroot -p${MYSQL_ROOT_PASSWORD} -e "CREATE DATABASE auth;"
+          create user '${MYSQL_USER}'@'%' identified by '${MYSQL_AUTH_PASSWORD}';
+          flush privliege;
+          EOF;
+      restartPolicy: Never

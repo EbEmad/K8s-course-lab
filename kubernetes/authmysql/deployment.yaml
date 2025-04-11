@@ -1,0 +1,13 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: weather-auth
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: weather-auth
